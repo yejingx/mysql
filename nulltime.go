@@ -12,6 +12,8 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"time"
+
+	"github.com/gogo/protobuf/types"
 )
 
 // Scan implements the Scanner interface.
@@ -34,6 +36,9 @@ func (nt *NullTime) Scan(value interface{}) (err error) {
 	case string:
 		nt.Time, err = parseDateTime([]byte(v), time.UTC)
 		nt.Valid = (err == nil)
+		return
+	case *types.Timestamp:
+		nt.Time, err = types.TimestampFromProto(v)
 		return
 	}
 
